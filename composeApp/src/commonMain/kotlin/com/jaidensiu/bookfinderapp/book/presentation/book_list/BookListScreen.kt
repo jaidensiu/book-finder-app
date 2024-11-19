@@ -135,34 +135,26 @@ fun BookListScreen(
                         )
                     }
                 ) {
-                    Tab(
-                        selected = state.selectedTabIndex == 0,
-                        onClick = {
-                            onAction(BookListAction.OnTabSelected(index = 0))
-                        },
-                        modifier = Modifier.weight(1f),
-                        selectedContentColor = SandYellow,
-                        unselectedContentColor = Color.Black.copy(alpha = 0.5f)
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.search_results),
-                            modifier = Modifier.padding(vertical = 12.dp)
-                        )
-                    }
-
-                    Tab(
-                        selected = state.selectedTabIndex == 1,
-                        onClick = {
-                            onAction(BookListAction.OnTabSelected(index = 1))
-                        },
-                        modifier = Modifier.weight(1f),
-                        selectedContentColor = SandYellow,
-                        unselectedContentColor = Color.Black.copy(alpha = 0.5f)
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.favorites),
-                            modifier = Modifier.padding(vertical = 12.dp)
-                        )
+                    BookListPage.entries.forEach { page ->
+                        Tab(
+                            selected = state.selectedTabIndex == page.index,
+                            onClick = {
+                                onAction(BookListAction.OnTabSelected(index = page.index))
+                            },
+                            modifier = Modifier.weight(1f),
+                            selectedContentColor = SandYellow,
+                            unselectedContentColor = Color.Black.copy(alpha = 0.5f)
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    resource = when (page) {
+                                        BookListPage.SEARCH_RESULTS -> Res.string.search_results
+                                        BookListPage.FAVORITES -> Res.string.favorites
+                                    }
+                                ),
+                                modifier = Modifier.padding(vertical = 12.dp)
+                            )
+                        }
                     }
                 }
 
@@ -180,8 +172,8 @@ fun BookListScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        when (pageIndex) {
-                            0 -> {
+                        when (BookListPage.fromIndex(pageIndex)) {
+                            BookListPage.SEARCH_RESULTS -> {
                                 if (state.isLoading) {
                                     CircularProgressIndicator()
                                 } else {
@@ -194,6 +186,7 @@ fun BookListScreen(
                                                 color = MaterialTheme.colorScheme.error
                                             )
                                         }
+
                                         state.searchResults.isEmpty() -> {
                                             Text(
                                                 text = stringResource(Res.string.no_search_results),
@@ -202,6 +195,7 @@ fun BookListScreen(
                                                 color = MaterialTheme.colorScheme.error
                                             )
                                         }
+
                                         else -> {
                                             BookList(
                                                 books = state.searchResults,
@@ -215,7 +209,8 @@ fun BookListScreen(
                                     }
                                 }
                             }
-                            1 -> {
+
+                            BookListPage.FAVORITES -> {
                                 if (state.favoriteBooks.isEmpty()) {
                                     Text(
                                         text = stringResource(Res.string.no_favorite_books),
