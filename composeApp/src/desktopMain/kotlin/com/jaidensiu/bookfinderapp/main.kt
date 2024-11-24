@@ -2,6 +2,7 @@ package com.jaidensiu.bookfinderapp
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import com.jaidensiu.bookfinderapp.app.App
 import com.jaidensiu.bookfinderapp.di.initKoin
 
 fun main() {
