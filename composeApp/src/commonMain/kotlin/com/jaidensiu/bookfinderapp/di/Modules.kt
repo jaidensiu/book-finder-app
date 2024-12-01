@@ -1,5 +1,8 @@
 package com.jaidensiu.bookfinderapp.di
 
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.jaidensiu.bookfinderapp.book.data.database.DatabaseFactory
+import com.jaidensiu.bookfinderapp.book.data.database.FavoriteBookDatabase
 import com.jaidensiu.bookfinderapp.book.data.network.KtorRemoteBookDataSource
 import com.jaidensiu.bookfinderapp.book.data.network.RemoteBookDataSource
 import com.jaidensiu.bookfinderapp.book.data.repository.DefaultBookRepository
@@ -20,6 +23,8 @@ val sharedModule = module {
     single { HttpClientFactory.create(get()) }
     singleOf(::KtorRemoteBookDataSource).bind<RemoteBookDataSource>()
     singleOf(::DefaultBookRepository).bind<BookRepository>()
+    single { get<DatabaseFactory>().create().setDriver(BundledSQLiteDriver()).build() }
+    single { get<FavoriteBookDatabase>().favoriteBookDao }
     viewModelOf(::BookListViewModel)
     viewModelOf(::BookDetailViewModel)
     viewModelOf(::SelectedBookViewModel)
